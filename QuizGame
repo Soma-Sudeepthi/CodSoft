@@ -1,0 +1,87 @@
+import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class QuizGame {
+    static Scanner scanner = new Scanner(System.in);
+    static String[] questions = {
+    	"Who invented java programming language?",
+        "What is the capital of France?",
+        "Which printing statement is used to print in java?",
+        "What is 2 + 2?",
+        "Who wrote 'To be, or not to be'?"
+    };
+    static String[][] options = {
+    	{"1. Dennis Ritchie", "2. Gudio Van Rossum", "3. Brendan Eich", "4. James Gosling"},
+        {"1. Berlin", "2. Madrid", "3. Paris", "4. Rome"},
+        {"1. print()", "2.System.out.print()", "3. printf()", "4.None"},
+        {"1. 3", "2. 4", "3. 5", "4. 6"},
+        {"1. Charles Dickens", "2. William Shakespeare", "3. Mark Twain", "4. Ernest Hemingway"}
+    };
+    static int[] correctAnswers = {4, 3, 2, 2, 2};
+    static int score = 0;
+    static int currentQuestion = 0;
+    static boolean answered = false;
+
+    public static void main(String[] args) {
+        while (currentQuestion < questions.length) {
+            displayQuestion();
+            startTimer();
+            getUserAnswer();
+        }
+        displayResults();
+    }
+
+    public static void displayQuestion() {
+        System.out.println("Question " + (currentQuestion + 1) + ": " + questions[currentQuestion]);
+        for (String option : options[currentQuestion]) {
+            System.out.println(option);
+        }
+    }
+
+    public static void startTimer() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (!answered) {
+                    System.out.println("\nTime's up! Moving to the next question.");
+                    currentQuestion++;
+                    if (currentQuestion < questions.length) {
+                        displayQuestion();
+                        startTimer();
+                    } else {
+                        displayResults();
+                    }
+                }
+            }
+        }, 15000); // 15 seconds timer
+    }
+
+    public static void getUserAnswer() {
+        answered = false;
+        System.out.print("Enter your answer (1-4): ");
+        int answer = scanner.nextInt();
+        answered = true;
+
+        if (answer == correctAnswers[currentQuestion]) {
+            System.out.println("Correct!");
+            score++;
+        } else {
+            System.out.println("Wrong!");
+        }
+
+        currentQuestion++;
+    }
+
+    public static void displayResults() {
+        System.out.println("\nQuiz Over! Your score is " + score + "/" + questions.length);
+        System.out.println("Summary:");
+        for (int i = 0; i < questions.length; i++) {
+            System.out.println("Question " + (i + 2) + ": " + questions[i]);
+            System.out.println("Correct answer: " + options[i][correctAnswers[i] - 1]);
+        }
+        scanner.close();
+        System.exit(0);
+    }
+}
